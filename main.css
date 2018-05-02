@@ -1,0 +1,17 @@
+/* insert style here */
+header {
+  background-color: #eebb44;
+  margin-bottom: 40px;
+}
+
+.drink-image {
+	border: lightgray solid 1px;
+  	width: 100%;
+}
+.js-result-item {
+	
+	margin-bottom: 20px;
+}
+.hidden {
+	visibility: hidden;
+}
