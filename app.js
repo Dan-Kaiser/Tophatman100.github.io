@@ -37,48 +37,26 @@ var drinkTitles = {
 	z: [14157,14065,14594,16942,15328,14888,15801,15933,15691,17027,16963,15254,17241]
 };
 
-var drinkTitlesTest = {
-	a: [{name : "A", id: 11004}, {name : "A2", id: 11064}, {name : "A3", id: 11224}],
-	b: [{name : "B", id: 11064}],
-	c: [{name : "C", id: 11224}],
-	d: [{name : "D", id: 11324}],
-	e: [{name : "E", id: 11338}],
-	f: [{name : "F", id: 11375}],
-	g: [{name : "G", id: 11417}],
-	h: [{name : "H", id: 11470}],
-	i: [{name : "I", id: 11528}],
-	j: [{name : "J", id: 11566}],
-	k: [{name : "K", id: 12764}],
-	l: [{name : "L", id: 11670}],
-	m: [{name : "M", id: 11786}],
-	n: [{name : "N", id: 11844}],
-	o: [{name : "O", id: 16995}],
-	p: [{name : "P", id: 11938}],
-	q: [{name : "Q", id: 11993}],
-	r: [{name : "R", id: 12055}],
-	s: [{name : "S", id: 13036}],
-	t: [{name : "T", id: 12726}],
-	u: [{name : "U", id: 14456}],
-	v: [{name : "V", id: 12444}],
-	w: [{name : "W", id: 13058}],
-	x: [{name : "X", id: 12754}],
-	y: [{name : "Y", id: 17219}],
-	z: [{name : "Z", id: 16942}]
-};
-
 //	console.log(nestedArrays[1][(Math.floor(Math.random() * nestedArrays[0].length))])
 //	console.log(drinkTitlesTest.a[0].id);
 
 var alphabet = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'];
+
+function getTokens(rawString) {
+  // NB: `.filter(Boolean)` removes any falsy items from an array
+  // removes spaces and numbers from the string.
+  str = rawString.replace(/\s+/g, '').replace(/[0-9]/g, '');
+  return str.toLowerCase().split(/[ ,!.";:-]+/).filter(Boolean).sort();
+}
 
 function getDataByFirstLetter(searchTerm, callback) {
 	//sort array by search term then append array to html
 	state.items = [];
 	state.ids = [];
 	state.itemOrder = [];
-	userSearch = searchTerm.toString().toLowerCase();
+	userSearch = getTokens(searchTerm).toString().toLowerCase();
 
-	for(o = 0; o < searchTerm.length; o++){
+	for(o = 0; o < userSearch.length; o++){
 		var currentLetter = userSearch[o];
 		var random = Math.floor(Math.random() * (drinkTitles[currentLetter].length-1));
 	
@@ -130,7 +108,7 @@ function renderResult(result) {
 	var template =  
   		'<div class="col-4 js-result-item">' +
         	'<h3>'+ result.strDrink +'</h3>' +
-        	'<img onclick="toggleHidden(event)" class="drink-image" src='+ result.strDrinkThumb +' width="200">' +
+        	'<img class="drink-image" src='+ result.strDrinkThumb +' width="200">' +
         	'<div class="js-ingredients"' +
         		'<div id="strIngredient1">'+ result.strMeasure1 + " " + result.strIngredient1 + '</div>' +
         	'</div>' +
@@ -143,16 +121,10 @@ function renderResult(result) {
     		element.find('#strIngredient1').append('<div id="'+ currentIngredient +'">' + result[currentMeasure] + " " + result[currentIngredient] + '</div>');
     	}
     }
-    element.find('.instructions').addClass('.hidden')
+    //element.find('.js-ingredients').addClass('hidden');
     return element;
 }
 
-//TODO -- add a '.hidden' class to '.js-ingredients' or remove one if there is one already there.
-function toggleHidden(event){
-	var element = $(event.currentTarget);
-	var find = element.find('.js-instructions').addClass('.hidden');
-	console.log(find);
-}
 
 function addItemToState(data) {
 	state.items.push(data.drinks[0]);
@@ -165,7 +137,6 @@ function displaySearchData(data) {
     	return renderResult(item);
   	});
   	itemOrder = orderData(state);
-  	console.log(itemOrder);
   	for (i = 0; i < itemOrder.length; i++){
   	$('.js-search-results').append(results[itemOrder[i]]);
   	}
